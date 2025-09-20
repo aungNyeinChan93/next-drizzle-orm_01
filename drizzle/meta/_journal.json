@@ -15,6 +15,20 @@
       "when": 1758352513246,
       "tag": "0001_premium_viper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758355040609,
+      "tag": "0002_keen_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1758355115742,
+      "tag": "0003_flimsy_mojo",
+      "breakpoints": true
     }
   ]
 }
