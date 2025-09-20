@@ -17,7 +17,6 @@ export async function registerAction(init: any, formData: FormData) {
                     callbackURL: '/',
                 },
             })
-            // await db.insert(usersTable).values({ name: data?.name as string, email: data?.email as string, id: Math.random().toString() })
         } catch (error) {
             console.log(error);
             return false

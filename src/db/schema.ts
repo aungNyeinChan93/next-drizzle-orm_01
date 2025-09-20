@@ -1,6 +1,6 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, integer } from "drizzle-orm/pg-core";
 
-export const user = pgTable("user", {
+export const user = pgTable("users", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
@@ -58,4 +58,14 @@ export const verification = pgTable("verification", {
         .defaultNow()
         .$onUpdate(() => /* @__PURE__ */ new Date())
         .notNull(),
+});
+
+export const customers = pgTable('customers', {
+    id: text('id').primaryKey(),
+    name: text('name').notNull(),
+    email: text('email').notNull().unique(),
+
+
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull()
 });

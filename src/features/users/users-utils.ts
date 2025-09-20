@@ -1,10 +1,10 @@
-import { usersTable } from "@/db/schema"
+import { user } from "@/db/schema"
 import db from "@/index"
 
 
-export type UserType = typeof usersTable.$inferSelect
+export type UserType = typeof user.$inferSelect
 
 export async function getAllUsers() {
-    const users = db.select().from(usersTable);
+    const users = db.select().from(user);
     return users
 }

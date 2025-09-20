@@ -5,36 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758352306284,
-      "tag": "0000_stiff_orphan",
+      "when": 1758374383271,
+      "tag": "0000_brainy_warbound",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1758352513246,
-      "tag": "0001_premium_viper",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1758355040609,
-      "tag": "0002_keen_mastermind",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1758355115742,
-      "tag": "0003_flimsy_mojo",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1758357333911,
-      "tag": "0004_sparkling_chronomancer",
+      "when": 1758374425221,
+      "tag": "0001_fair_loki",
       "breakpoints": true
     }
   ]
