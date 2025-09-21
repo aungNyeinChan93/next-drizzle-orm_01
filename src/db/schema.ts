@@ -1,5 +1,8 @@
-import { pgTable, text, timestamp, boolean, uuid, integer } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, uuid, integer, uniqueIndex, index, pgEnum } from "drizzle-orm/pg-core";
 
+
+// user
 export const user = pgTable("users", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
@@ -12,6 +15,13 @@ export const user = pgTable("users", {
         .$onUpdate(() => /* @__PURE__ */ new Date())
         .notNull(),
 });
+
+export const userRelations = relations(user, ({ many }) => (
+    {
+        articles: many(articelTable),
+        comments: many(commentTable)
+    }
+))
 
 export const session = pgTable("session", {
     id: text("id").primaryKey(),
@@ -60,12 +70,96 @@ export const verification = pgTable("verification", {
         .notNull(),
 });
 
+
+// customers
+export const customerType = pgEnum('customerType', ['silver', 'gold', 'platinum', 'diamond', 'ruby'])
 export const customers = pgTable('customers', {
     id: text('id').primaryKey(),
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
-
-
+    type: customerType('type').default('silver').notNull(),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull()
+}, table => {
+    return {
+        customerNameIndex: index('customerNameIndex').on(table.name)
+    }
 });
+
+// article
+export const articelTable = pgTable('articles', {
+    id: text('id').primaryKey(),
+    title: text('title').notNull(),
+    body: text('body'),
+    user_id: text('user_id').references(() => user.id).notNull(),
+    created_at: timestamp('created_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, tabel => {
+    return {
+        titleIndex: index('titleIndex').on(tabel.title),
+    }
+});
+
+export const articleRelations = relations(articelTable, ({ one, many }) => ({
+    user: one(user, {
+        fields: [articelTable.user_id],
+        references: [user.id]
+    }),
+    comments: many(commentTable),
+    articleCategory: many(articleCategoryTable)
+
+}))
+
+// comment 
+export const commentTable = pgTable('comments', {
+    id: text('id').primaryKey(),
+    body: text('body').notNull(),
+    user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+    article_id: text('article_id').references(() => articelTable.id, { onDelete: 'cascade' })
+});
+
+export const commentRelations = relations(commentTable, ({ many, one }) => ({
+    user: one(user, {
+        fields: [commentTable.user_id],
+        references: [user.id]
+    }),
+    article: one(articelTable, {
+        fields: [commentTable.article_id],
+        references: [articelTable.id]
+    }),
+}))
+
+// category
+export const categoryTable = pgTable('categories', {
+    id: text('id').primaryKey(),
+    name: text('name').notNull(),
+    created_at: timestamp('created_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => {
+    return {
+        categoryNameIndex: index('categoryNameIndex').on(table.name)
+    }
+});
+
+export const categoryRelations = relations(categoryTable, ({ many, one }) => (
+    {
+        articleCategory: many(articleCategoryTable)
+    }
+));
+
+// articleCategoryTable
+export const articleCategoryTable = pgTable('articleCategory', {
+    article_id: text('article_id').notNull().references(() => articelTable.id, { onDelete: 'cascade' }),
+    category_id: text('category_id').notNull().references(() => categoryTable.id, { onDelete: 'cascade' })
+})
+
+export const articleCategoryRelation = relations(articleCategoryTable, ({ one }) => ({
+    article: one(articelTable, {
+        fields: [articleCategoryTable.article_id],
+        references: [articelTable.id]
+    }),
+    category: one(categoryTable, {
+        fields: [articleCategoryTable.category_id],
+        references: [categoryTable.id]
+    })
+}))
