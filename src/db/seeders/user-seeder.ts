@@ -1,41 +1,47 @@
-// import 'dotenv/config';
-// import { drizzle } from 'drizzle-orm/neon-http';
-// import { eq } from 'drizzle-orm';
-// import { usersTable } from '@/db/schema';
-// import db from '@/index'
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from '@neondatabase/serverless'
+import * as schema from '@/db/schema'
 
-// async function userSeeder() {
-//     const user: typeof usersTable.$inferInsert = {
-//         name: 'soe',
-//         age: 30,
-//         email: 'soe@example.com',
-//     };
+import 'dotenv/config';
+import { asc, eq, sql } from "drizzle-orm";
 
-//     await db.insert(usersTable).values(user);
-//     console.log('New user created!')
+const db = drizzle(neon(process.env.DATABASE_URL!), { schema: { ...schema } });
 
-//     const users = await db.select().from(usersTable);
-//     console.log('Getting all users from the database: ', users)
 
-//     /*
-//     const users: {
-//       id: number;
-//       name: string;
-//       age: number;
-//       email: string;
-//     }[]
-//     */
 
-//     // await db
-//     //     .update(usersTable)
-//     //     .set({
-//     //         age: 31,
-//     //     })
-//     //     .where(eq(usersTable.email, user.email));
-//     // console.log('User info updated!')
+export async function main() {
+    const emails = await db.query.user.findMany({
+        columns: {
+            name: true
+        },
+        extras: {
+            lowercaseName: sql<string>`lower(${schema.user.email})`.as('lowercaseName')
+        },
+        with: {
+            articles: {
+                columns: { title: true }
+            },
+            comments: true
+        },
 
-//     // await db.delete(usersTable).where(eq(usersTable.email, user.email));
-//     // console.log('User deleted!')
-// }
+        orderBy: asc(schema.user.createdAt),
+        // where: (table, funs) => funs.eq(table.name, 'susu'),
+        // where: eq(schema.user.name, 'susu')
+        // offset: 2,
 
-// userSeeder();
+    });
+
+
+    console.log({ emails });
+
+    // await db
+    //     .update(schema.user)
+    //     .set({
+    //         name: 'hoho'
+    //     })
+    //     .where(eq(schema.user.email, 'hoho@gmail.com'));
+
+};
+
+
+main()
