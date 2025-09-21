@@ -163,3 +163,13 @@ export const articleCategoryRelation = relations(articleCategoryTable, ({ one })
         references: [categoryTable.id]
     })
 }))
+
+
+// book
+export const bookTable = pgTable('books', {
+    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    name: text('name').notNull(),
+
+    created_at: timestamp('crated_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+})
